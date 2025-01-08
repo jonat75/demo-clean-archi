@@ -1,5 +1,5 @@
-import { UserRepository } from '../../../../core/gateways/UserRepository';
-import { User } from '../../../../core/models/User';
+import { UserRepository } from '../../../../domain/gateways/UserRepository';
+import { User } from '../../../../domain/models/User';
 
 export class InMemoryUserRepository implements UserRepository {
   private users: User[] = [];

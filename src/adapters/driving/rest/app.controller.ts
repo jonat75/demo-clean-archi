@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
-import { User } from '../../../core/models/User';
+import { User } from '../../../domain/models/User';
 import { InMemoryUserRepository } from '../../driven/gateways/UserRepository/InMemoryUserRepository';
-import { RetrieveUsers } from '../../../core/usecases/RetrieveUsers';
+import { RetrieveUsers } from '../../../domain/usecases/RetrieveUsers';
 
 @Controller()
 export class AppController {
