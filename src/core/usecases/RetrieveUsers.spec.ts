@@ -1,30 +1,5 @@
-interface User {
-  name: string;
-}
-
-interface UserRepository {
-  findAll(): Promise<User[]>;
-}
-
-class RetrieveUsers {
-  constructor(private readonly userRepository: UserRepository) {}
-
-  async execute(): Promise<User[]> {
-    return this.userRepository.findAll();
-  }
-}
-
-class InMemoryUserRepository implements UserRepository {
-  private users: User[] = [];
-
-  async findAll() {
-    return this.users;
-  }
-
-  feed(users: User[]) {
-    this.users = users;
-  }
-}
+import { RetrieveUsers } from './RetrieveUsers';
+import { InMemoryUserRepository } from '../../adapters/driven/gateways/UserRepository/InMemoryUserRepository';
 
 describe('retrieveUsers', () => {
   let retrieveUsers: RetrieveUsers;
