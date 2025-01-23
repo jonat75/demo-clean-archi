@@ -1,73 +1,59 @@
 import { InMemoryTripRepository } from '../../adapters/driven/gateways/TripRepository/InMemoryTripRepository';
-import { BookTrip, UuidGenerator } from './BookTrip';
-
-class FakeUuidGenerator implements UuidGenerator {
-  private _nextUuid: string;
-  async generate() {
-    return this._nextUuid;
-  }
-  set nextUuid(uuid: string) {
-    this._nextUuid = uuid;
-  }
-}
+import { Trip } from '../models/Trip';
+import { User } from '../models/User';
+import { BookTrip } from './BookTrip';
 
 describe('bookTrip', () => {
   let tripRepository: InMemoryTripRepository;
   let bookTrip: BookTrip;
-  let uuidGenerator: FakeUuidGenerator;
+
+  let user: User;
 
   beforeEach(() => {
     tripRepository = new InMemoryTripRepository();
-    uuidGenerator = new FakeUuidGenerator();
-    bookTrip = new BookTrip(tripRepository, uuidGenerator);
+    bookTrip = new BookTrip(tripRepository);
+    user = new User('John', new Date(), '1');
   });
 
   it('should book a trip from outside to Paris', async () => {
     //Given
-    const tripParam = {
-      from: 'Orléans',
-      to: 'Paris',
-      userId: '1',
-      id: 'id-1',
-    };
-    uuidGenerator.nextUuid = tripParam.id;
-    //When
-    await bookTrip.execute(tripParam.from, tripParam.to, tripParam.userId);
-    //Then
-    expect(tripRepository.trips).toEqual([{ price: 0, ...tripParam }]);
-  });
+    const tripFromOutsideToParis = new Trip('Orléans', 'Paris', user);
 
+    //When
+    await bookTrip.execute(tripFromOutsideToParis);
+
+    //Then
+    expect(tripFromOutsideToParis.price).toEqual(0);
+  });
   it('should book a trip from paris to outside', async () => {
     //Given
-    const tripParam = {
-      from: 'Paris',
-      to: 'Orléans',
-      userId: '1',
-      id: 'id-2',
-    };
-    uuidGenerator.nextUuid = tripParam.id;
+    const tripFromParisToOutside = new Trip('Paris', 'Orléans', user);
 
     //When
-    await bookTrip.execute(tripParam.from, tripParam.to, tripParam.userId);
-    //Then
-    expect(tripRepository.trips).toEqual([{ price: 50, ...tripParam }]);
-  });
+    await bookTrip.execute(tripFromParisToOutside);
 
+    //Then
+    expect(tripFromParisToOutside.price).toEqual(50);
+  });
   it('should book a trip from paris to paris', async () => {
     //Given
-    const tripParam = {
-      from: 'Paris',
-      to: 'Paris',
-      userId: '1',
-      id: 'id-3',
-    };
-    uuidGenerator.nextUuid = tripParam.id;
+    const tripFromParisToParis = new Trip('Paris', 'Paris', user);
 
     //When
-    await bookTrip.execute(tripParam.from, tripParam.to, tripParam.userId);
+    await bookTrip.execute(tripFromParisToParis);
     //Then
-    expect(tripRepository.trips).toEqual([{ price: 30, ...tripParam }]);
+    expect(tripFromParisToParis.price).toEqual(30);
   });
 
-  // it('should pay half price if user registered more than a year ago', async () => {});
+  it('should pay half price if the taveler has less than one year of seniority', async () => {
+    //Given
+    const user1 = new User('John', new Date('2023/04/09'), '1');
+    const tripFromParisToParis = new Trip('Paris', 'Paris', user1);
+
+    //When
+    await bookTrip.execute(tripFromParisToParis);
+
+    //Then
+    expect(tripFromParisToParis.price).toEqual(15);
+  });
 });

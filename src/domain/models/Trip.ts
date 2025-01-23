@@ -1,25 +1,19 @@
-export interface TripProps {
-  from: string;
-  to: string;
-  userId: string;
-  id: string;
-}
-export type TripState = TripProps & {
-  price: number;
-};
+import { User } from './User';
 
 export class Trip {
-  private from: string;
-  private to: string;
-  private userId: string;
-  private price: number;
-  private id: string;
-  constructor(props: TripProps) {
-    this.from = props.from;
-    this.to = props.to;
-    this.userId = props.userId;
-    this.price = this.calculatePrice();
-    this.id = props.id;
+  private _price: number;
+  constructor(
+    private from: string,
+    private to: string,
+    private user: User,
+    private id?: string,
+  ) {
+    this.id = id ?? crypto.randomUUID();
+    this._price = this.calculatePrice();
+  }
+
+  public get price(): number {
+    return this._price;
   }
 
   calculatePrice(): number {
@@ -30,6 +24,14 @@ export class Trip {
 
     if (isFromParisToOutside) price = 50;
     if (isFromParisToParis) price = 30;
+
+    if (this.isUserYoungThanOneYear()) return price / 2;
     return price;
+  }
+
+  isUserYoungThanOneYear(): boolean {
+    const currentDate = new Date();
+    const userSeniority = currentDate.getTime() - this.user.createdAt.getTime();
+    return Math.floor(userSeniority / (1000 * 60 * 60 * 24 * 365)) >= 1;
   }
 }
