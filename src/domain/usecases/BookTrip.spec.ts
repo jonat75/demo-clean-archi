@@ -12,7 +12,7 @@ describe('bookTrip', () => {
   beforeEach(() => {
     tripRepository = new InMemoryTripRepository();
     bookTrip = new BookTrip(tripRepository);
-    user = new User('John', new Date(), '1');
+    user = new User('John', new Date('2023/04/09'), '1');
   });
 
   it('should book a trip from outside to Paris', async () => {
@@ -47,9 +47,8 @@ describe('bookTrip', () => {
 
   it('should pay half price if the taveler has less than one year of seniority', async () => {
     //Given
-    const user1 = new User('John', new Date('2023/04/09'), '1');
+    const user1 = new User('John', new Date('2024/04/09'), '1');
     const tripFromParisToParis = new Trip('Paris', 'Paris', user1);
-
     //When
     await bookTrip.execute(tripFromParisToParis);
 

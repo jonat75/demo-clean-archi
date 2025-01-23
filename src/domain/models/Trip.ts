@@ -26,12 +26,13 @@ export class Trip {
     if (isFromParisToParis) price = 30;
 
     if (this.isUserYoungThanOneYear()) return price / 2;
+
     return price;
   }
 
   isUserYoungThanOneYear(): boolean {
     const currentDate = new Date();
     const userSeniority = currentDate.getTime() - this.user.createdAt.getTime();
-    return Math.floor(userSeniority / (1000 * 60 * 60 * 24 * 365)) >= 1;
+    return Math.floor(userSeniority / (1000 * 60 * 60 * 24 * 365)) < 1;
   }
 }
