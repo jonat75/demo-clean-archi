@@ -1,5 +1,5 @@
-import { RetrieveUsers } from './RetrieveUsers';
 import { InMemoryUserRepository } from '../../adapters/driven/gateways/UserRepository/InMemoryUserRepository';
+import { RetrieveUsers } from './RetrieveUsers';
 
 describe('retrieveUsers', () => {
   let retrieveUsers: RetrieveUsers;
@@ -24,7 +24,7 @@ describe('retrieveUsers', () => {
 
   it('should return an array with one user when there is one user', async () => {
     // Given
-    const users = [{ name: 'John Doe' }];
+    const users = [{ name: 'John Doe', id: '1', createdAt: new Date() }];
     userRepository.feed(users);
 
     // When
@@ -34,9 +34,12 @@ describe('retrieveUsers', () => {
     expect(retrievedUsers).toEqual(users);
   });
 
-  it('should return an array with one user when there is more than one user', async () => {
+  it('should return an array with more than one user when there is more than one user', async () => {
     // Given
-    const users = [{ name: 'John Doe' }, { name: 'Jane Doe' }];
+    const users = [
+      { name: 'John Doe', id: '1', createdAt: new Date() },
+      { name: 'Jane Doe', id: '2', createdAt: new Date() },
+    ];
     userRepository.feed(users);
 
     // When
