@@ -1,6 +1,6 @@
 import { InMemoryTripRepository } from '../../adapters/driven/gateways/TripRepository/InMemoryTripRepository';
 import { InMemoryUserRepository } from '../../adapters/driven/gateways/UserRepository/InMemoryUserRepository';
-import { BookTrip, UuidGenerator } from './BookTrip';
+import { BookTrip, DateGenerator, UuidGenerator } from './BookTrip';
 
 class FakeUuidGenerator implements UuidGenerator {
   private _nextUuid: string;
@@ -12,17 +12,34 @@ class FakeUuidGenerator implements UuidGenerator {
   }
 }
 
+class FakeDateGenerator implements DateGenerator {
+  private _date: Date;
+  async generate() {
+    return this._date;
+  }
+  set date(date: Date) {
+    this._date = date;
+  }
+}
+
 describe('bookTrip', () => {
   let tripRepository: InMemoryTripRepository;
   let userRepository: InMemoryUserRepository;
   let bookTrip: BookTrip;
   let uuidGenerator: FakeUuidGenerator;
+  let dateGenerator: FakeDateGenerator;
 
   beforeEach(() => {
     tripRepository = new InMemoryTripRepository();
     userRepository = new InMemoryUserRepository();
     uuidGenerator = new FakeUuidGenerator();
-    bookTrip = new BookTrip(tripRepository, userRepository, uuidGenerator);
+    dateGenerator = new FakeDateGenerator();
+    bookTrip = new BookTrip(
+      tripRepository,
+      userRepository,
+      uuidGenerator,
+      dateGenerator,
+    );
   });
 
   it('should book a trip from outside to Paris', async () => {
@@ -36,6 +53,7 @@ describe('bookTrip', () => {
       createdAt: new Date(),
     };
     uuidGenerator.nextUuid = tripParam.id;
+    dateGenerator.date = tripParam.createdAt;
     userRepository.feed([
       {
         id: tripParam.userId,
@@ -60,6 +78,7 @@ describe('bookTrip', () => {
       createdAt: new Date(),
     };
     uuidGenerator.nextUuid = tripParam.id;
+    dateGenerator.date = tripParam.createdAt;
     userRepository.feed([
       {
         id: tripParam.userId,
@@ -85,6 +104,7 @@ describe('bookTrip', () => {
       createdAt: new Date(),
     };
     uuidGenerator.nextUuid = tripParam.id;
+    dateGenerator.date = tripParam.createdAt;
     userRepository.feed([
       {
         id: tripParam.userId,
@@ -110,6 +130,7 @@ describe('bookTrip', () => {
       createdAt: new Date(),
     };
     uuidGenerator.nextUuid = tripParam.id;
+    dateGenerator.date = tripParam.createdAt;
     userRepository.feed([
       {
         id: tripParam.userId,
